@@ -39,7 +39,7 @@ torch.backends.cudnn.deterministic = True
 def main(config):
     total_epoch_time = 0
     total_eval_time = 0
-
+#test
     total_start_time = time.time()
 
     # Add file logging besides stdout
