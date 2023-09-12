@@ -44,10 +44,10 @@ if __name__ == '__main__':
         i = 0
 
         # 开始截取数据
-        while i < fhrLen:
-            flag = 0
-            saveFhrLen = 0
-            saveUcLen = 0
+        # while i < fhrLen:
+        #     flag = 0
+        #     saveFhrLen = 0
+        #     saveUcLen = 0
             # if (label[i] == 1):
             #     start = i
             #     while i<fhrLen and label[i] == 1:
@@ -144,21 +144,21 @@ if __name__ == '__main__':
             #     prolongCnt = prolongCnt + 1
             #     saveFhrLen = saveFhr.shape[0]
             #     saveUcLen = saveUc.shape[0]
-            if label[i] == 0:
-                start = i
-                while i < fhrLen and label[i] == 0:
-                    i = i + 1
-                if (i - start) > resLen:
-                    saveFhr = fhr[start:start + resLen]
-                    saveUc = uc[start:start + resLen]
-                    saveArr = np.array((saveFhr, saveUc))
-                    np.save(saveNormalPath + preName + '_' + str(prolongCnt) + '.npy', saveArr)
-                    prolongCnt = prolongCnt + 1
-                    saveFhrLen = saveFhr.shape[0]
-                    saveUcLen = saveUc.shape[0]
-                    print('save: ' + filename + ' saveFhrLen: ' + str(saveFhrLen) + ' saveUcLen:' + str(saveUcLen))
-                else:
-                    continue
+            # if label[i] == 0:
+            #     start = i
+            #     while i < fhrLen and label[i] == 0:
+            #         i = i + 1
+            #     if (i - start) > resLen:
+            #         saveFhr = fhr[start:start + resLen]
+            #         saveUc = uc[start:start + resLen]
+            #         saveArr = np.array((saveFhr, saveUc))
+            #         np.save(saveNormalPath + preName + '_' + str(prolongCnt) + '.npy', saveArr)
+            #         prolongCnt = prolongCnt + 1
+            #         saveFhrLen = saveFhr.shape[0]
+            #         saveUcLen = saveUc.shape[0]
+            #         print('save: ' + filename + ' saveFhrLen: ' + str(saveFhrLen) + ' saveUcLen:' + str(saveUcLen))
+            #     else:
+            #         continue
     # flag = 1
-            i = i + 1
+    #         i = i + 1
     # if flag == 0:

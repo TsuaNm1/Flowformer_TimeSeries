@@ -39,7 +39,7 @@ torch.backends.cudnn.deterministic = True
 def main(config):
     total_epoch_time = 0
     total_eval_time = 0
-#test
+
     total_start_time = time.time()
 
     # Add file logging besides stdout
@@ -48,9 +48,11 @@ def main(config):
 
     logger.info('Running:\n{}\n'.format(' '.join(sys.argv)))  # command used to run
 
+    #通过设置设置随机种子
     if config['seed'] is not None:
         torch.manual_seed(config['seed'])
 
+    #是否使用GPU
     device = torch.device('cuda' if (torch.cuda.is_available() and config['gpu'] != '-1') else 'cpu')
     logger.info("Using device: {}".format(device))
     if device == 'cuda':
@@ -59,10 +61,16 @@ def main(config):
     # Build data
     logger.info("Loading and preprocessing data ...")
 
+    # 加载训练数据
     data_class = data_factory[config['data_class']]
+    #加载信息 n_proc线程数 limit_size限制样本数量
     my_data = data_class(config['data_dir'], pattern=config['pattern'], n_proc=config['n_proc'],
                          limit_size=config['limit_size'], config=config)
+
+    #暂时没用
     feat_dim = my_data.feature_df.shape[1]  # dimensionality of data features
+
+    # 使用StratifiedShuffleSplit作为验证方法，将标签值一维展开
     if config['task'] == 'classification':
         validation_method = 'StratifiedShuffleSplit'
         labels = my_data.labels_df.values.flatten()
@@ -73,27 +81,34 @@ def main(config):
     # Split dataset
     test_data = my_data
     test_indices = None  # will be converted to empty list in `split_dataset`, if also test_set_ratio == 0
+    #验证数据等于训练数据
     val_data = my_data
     val_indices = []
+
+    # 测试集数据导入
     if config['test_pattern']:  # used if test data come from different files / file patterns
         test_data = data_class(config['data_dir'], pattern=config['test_pattern'], n_proc=-1, config=config)
         test_indices = test_data.all_IDs
-    if config[
-        'test_from']:  # load test IDs directly from file, if available, otherwise use `test_set_ratio`. Can work together with `test_pattern`
+
+    # 加载测试集合下标，在多个模型中使用相同的测试集比较有用
+    if config['test_from']:  # load test IDs directly from file, if available, otherwise use `test_set_ratio`. Can work together with `test_pattern`
         test_indices = list(set([line.rstrip() for line in open(config['test_from']).readlines()]))
         try:
             test_indices = [int(ind) for ind in test_indices]  # integer indices
         except ValueError:
             pass  # in case indices are non-integers
         logger.info("Loaded {} test IDs from file: '{}'".format(len(test_indices), config['test_from']))
+
+    # 验证数据导入
     if config['val_pattern']:  # used if val data come from different files / file patterns
         val_data = data_class(config['data_dir'], pattern=config['val_pattern'], n_proc=-1, config=config)
         val_indices = val_data.all_IDs
 
     # Note: currently a validation set must exist, either with `val_pattern` or `val_ratio`
     # Using a `val_pattern` means that `val_ratio` == 0 and `test_ratio` == 0
-    if config['val_ratio'] > 0:
 
+    # 按照比例划分训练集、测试集、验证集
+    if config['val_ratio'] > 0:
         train_indices, val_indices, test_indices = split_dataset(data_indices=my_data.all_IDs,
                                                                  validation_method=validation_method,
                                                                  n_splits=1,
@@ -106,6 +121,7 @@ def main(config):
 
         train_indices = train_indices[0]  # `split_dataset` returns a list of indices *per fold/split*
         val_indices = val_indices[0]  # `split_dataset` returns a list of indices *per fold/split*
+    # 否则所有都是训练集
     else:
         train_indices = my_data.all_IDs
         if test_indices is None:
@@ -115,6 +131,7 @@ def main(config):
     logger.info("{} samples will be used for validation".format(len(val_indices)))
     logger.info("{} samples will be used for testing".format(len(test_indices)))
 
+    # 将数据index写入文件
     with open(os.path.join(config['output_dir'], 'data_indices.json'), 'w') as f:
         try:
             json.dump({'train_indices': list(map(int, train_indices)),
@@ -125,12 +142,16 @@ def main(config):
                        'val_indices': list(val_indices),
                        'test_indices': list(test_indices)}, f, indent=4)
 
+
     # Pre-process features
     normalizer = None
+    # 如果已经标准化了，直接加载
     if config['norm_from']:
         with open(config['norm_from'], 'rb') as f:
             norm_dict = pickle.load(f)
         normalizer = Normalizer(**norm_dict)
+
+    # 对数据进行标准化
     elif config['normalization'] is not None:
         normalizer = Normalizer(config['normalization'])
         my_data.feature_df.loc[train_indices] = normalizer.normalize(my_data.feature_df.loc[train_indices])
@@ -149,6 +170,7 @@ def main(config):
     logger.info("Creating model ...")
     model = model_factory(config, my_data)
 
+    # 是否冻结某些参数
     if config['freeze']:
         for name, param in model.named_parameters():
             if name.startswith('output_layer'):
@@ -156,7 +178,7 @@ def main(config):
             else:
                 param.requires_grad = False
 
-    # Initialize optimizer
+    # =初始化正则化超参数
     if config['global_reg']:
         weight_decay = config['l2_reg']
         output_reg = None
@@ -164,6 +186,7 @@ def main(config):
         weight_decay = 0
         output_reg = config['l2_reg']
 
+    # 选择优化器
     optim_class = get_optimizer(config['optimizer'])
     optimizer = optim_class(model.parameters(), lr=config['lr'], weight_decay=weight_decay)
 
@@ -179,8 +202,10 @@ def main(config):
                                                          config['lr_factor'])
     model.to(device)
 
+    # 损失函数
     loss_module = get_loss_module(config)
 
+    # 只进行测试
     if config['test_only'] == 'testset':  # Only evaluate and skip training
         dataset_class, collate_fn, runner_class = pipeline_factory(config)
         # test_dataset = dataset_class(test_data, test_indices)
@@ -203,6 +228,8 @@ def main(config):
 
     # Initialize data generators
     dataset_class, collate_fn, runner_class = pipeline_factory(config)
+
+    # 验证数据加载器
     val_dataset = dataset_class(val_data, val_indices)
 
     val_loader = DataLoader(dataset=val_dataset,
@@ -212,6 +239,7 @@ def main(config):
                             pin_memory=True,
                             collate_fn=lambda x: collate_fn(x, max_len=model.max_len))
 
+    # 训练数据加载器
     train_dataset = dataset_class(my_data, train_indices)
 
     train_loader = DataLoader(dataset=train_dataset,
@@ -221,19 +249,24 @@ def main(config):
                               pin_memory=True,
                               collate_fn=lambda x: collate_fn(x, max_len=model.max_len))
 
+
+    # 构建配置评估器
     trainer = runner_class(model, train_loader, device, loss_module, optimizer, l2_reg=output_reg,
                            print_interval=config['print_interval'], console=config['console'])
     val_evaluator = runner_class(model, val_loader, device, loss_module,
                                  print_interval=config['print_interval'], console=config['console'])
 
+    # 输出tensorboard_dir的目录
     tensorboard_writer = SummaryWriter(config['tensorboard_dir'])
 
-    best_value = 1e16 if config[
-                             'key_metric'] in NEG_METRICS else -1e16  # initialize with +inf or -inf depending on key metric
-    metrics = []  # (for validation) list of lists: for each epoch, stores metrics like loss, ...
+
+    # 初始化记录最佳性能的值，如果 key_metric是loss的话初始值就是最大正数，然后训练过程中越小越好，准确率则相反
+    best_value = 1e16 if config['key_metric'] in NEG_METRICS else -1e16  # initialize with +inf or -inf depending on key metric
+    metrics = []  # (for validation) list of lists:for each epoch, stores metrics like loss, ...
     best_metrics = {}
 
     # Evaluate on validation before training
+    # 这里提前计算一下评估指标，估计后面更好进行梯度计算 TODO：需要去看
     aggr_metrics_val, best_metrics, best_value = validate(val_evaluator, tensorboard_writer, config, best_metrics,
                                                           best_value, epoch=0)
     metrics_names, metrics_values = zip(*aggr_metrics_val.items())
