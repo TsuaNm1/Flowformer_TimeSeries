@@ -44,121 +44,162 @@ if __name__ == '__main__':
         i = 0
 
         # 开始截取数据
-        # while i < fhrLen:
-        #     flag = 0
-        #     saveFhrLen = 0
-        #     saveUcLen = 0
-            # if (label[i] == 1):
-            #     start = i
-            #     while i<fhrLen and label[i] == 1:
-            #         i = i+1
-            #     saveFhr = fhr[start:i]
-            #     saveUc = uc[start:i]
-            #     if len(saveFhr) < resLen:
-            #         # 在两侧补零
-            #         padding_length = resLen - len(saveFhr)
-            #         saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #         saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #     else:
-            #         # 计算需要截取的长度
-            #         trim_length = len(saveFhr) - resLen
-            #         # 计算起始索引和结束索引
-            #         start_index = trim_length // 2
-            #         end_index = start_index + resLen
-            #         saveFhr = saveFhr[start_index:end_index]
-            #         saveUc = saveUc[start_index:end_index]
-            #     saveArr = np.array((saveFhr,saveUc))
-            #     np.save(saveEarlyPath+preName+'_'+str(earlyCnt)+'.npy',saveArr)
-            #     earlyCnt = earlyCnt+1
-            #     saveFhrLen = saveFhr.shape[0]
-            #     saveUcLen = saveUc.shape[0]
-            # elif (label[i] == 2):
-            #     start = i
-            #     while i < fhrLen and label[i] == 2:
-            #         i = i + 1
-            #     saveFhr = fhr[start:i]
-            #     saveUc = uc[start:i]
-            #     if len(saveFhr) < resLen:
-            #         # 在两侧补零
-            #         padding_length = resLen - len(saveFhr)
-            #         saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #         saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #     else:
-            #         # 计算需要截取的长度
-            #         trim_length = len(saveFhr) - resLen
-            #         # 计算起始索引和结束索引
-            #         start_index = trim_length // 2
-            #         end_index = start_index + resLen
-            #         saveFhr = saveFhr[start_index:end_index]
-            #         saveUc = saveUc[start_index:end_index]
-            #     saveArr = np.array((saveFhr, saveUc))
-            #     np.save(saveLatePath +preName+'_'+str(lateCnt) + '.npy', saveArr)
-            #     lateCnt = lateCnt + 1
-            #     saveFhrLen = saveFhr.shape[0]
-            #     saveUcLen = saveUc.shape[0]
-            # elif (label[i] == 3):
-            #     start = i
-            #     while i < fhrLen and label[i] == 3:
-            #         i = i + 1
-            #     saveFhr = fhr[start:i]
-            #     saveUc = uc[start:i]
-            #     if len(saveFhr) < resLen:
-            #         # 在两侧补零
-            #         padding_length = resLen - len(saveFhr)
-            #         saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #         saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #     else:
-            #         # 计算需要截取的长度
-            #         trim_length = len(saveFhr) - resLen
-            #         # 计算起始索引和结束索引
-            #         start_index = trim_length // 2
-            #         end_index = start_index + resLen
-            #         saveFhr = saveFhr[start_index:end_index]
-            #         saveUc = saveUc[start_index:end_index]
-            #     saveArr = np.array((saveFhr, saveUc))
-            #     np.save(saveVarietyyPath +preName+'_'+ str(varietyCnt) + '.npy', saveArr)
-            #     varietyCnt = varietyCnt + 1
-            #     saveFhrLen = saveFhr.shape[0]
-            #     saveUcLen = saveUc.shape[0]
-            # elif (label[i] == 4):
-            #     start = i
-            #     while i < fhrLen and label[i] == 4:
-            #         i = i + 1
-            #     saveFhr = fhr[start:i]
-            #     saveUc = uc[start:i]
-            #     if len(saveFhr) < resLen:
-            #         # 在两侧补零
-            #         padding_length = resLen - len(saveFhr)
-            #         saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #         saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
-            #     else:
-            #         # 计算需要截取的长度
-            #         trim_length = len(saveFhr) - resLen
-            #         # 计算起始索引和结束索引
-            #         start_index = trim_length // 2
-            #         end_index = start_index + resLen
-            #         saveFhr = saveFhr[start_index:end_index]
-            #         saveUc = saveUc[start_index:end_index]
-            #     saveArr = np.array((saveFhr, saveUc))
-            #     np.save(saveProlongPath +preName+'_'+ str(prolongCnt) + '.npy', saveArr)
-            #     prolongCnt = prolongCnt + 1
-            #     saveFhrLen = saveFhr.shape[0]
-            #     saveUcLen = saveUc.shape[0]
-            # if label[i] == 0:
-            #     start = i
-            #     while i < fhrLen and label[i] == 0:
-            #         i = i + 1
-            #     if (i - start) > resLen:
-            #         saveFhr = fhr[start:start + resLen]
-            #         saveUc = uc[start:start + resLen]
-            #         saveArr = np.array((saveFhr, saveUc))
-            #         np.save(saveNormalPath + preName + '_' + str(prolongCnt) + '.npy', saveArr)
-            #         prolongCnt = prolongCnt + 1
-            #         saveFhrLen = saveFhr.shape[0]
-            #         saveUcLen = saveUc.shape[0]
-            #         print('save: ' + filename + ' saveFhrLen: ' + str(saveFhrLen) + ' saveUcLen:' + str(saveUcLen))
-            #     else:
-            #         continue
+        while i < fhrLen:
+            flag = 0
+            saveFhrLen = 0
+            saveUcLen = 0
+            if (label[i] == 1):
+                start = i
+                while i<fhrLen and label[i] == 1:
+                    i = i+1
+                saveFhr = fhr[start:i]
+                saveUc = uc[start:i]
+                if len(saveFhr) < resLen:
+                    # 在两侧补零
+                    padding_length = resLen - len(saveFhr)
+                    left_padding = padding_length // 2
+                    righ_padding = padding_length -left_padding
+                    saveUc_start_index = max(0,start-left_padding)
+                    saveUc_end_index = min(fhrLen,i+righ_padding)
+                    saveUc = uc[saveUc_start_index:saveUc_end_index]
+                    if(start-left_padding <0):
+                        saveUc = np.pad(saveUc,(left_padding-start,0),'constant')
+                    if(i+righ_padding > fhrLen):
+                        saveUc = np.pad(saveUc, (0, (i + righ_padding) - fhrLen), 'constant')
+                    saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+
+                    # saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+                else:
+
+                    # 计算需要截取的长度
+                    trim_length = len(saveFhr) - resLen
+                    # 计算起始索引和结束索引
+                    start_index = trim_length // 2
+                    end_index = start_index + resLen
+                    saveFhr = saveFhr[start_index:end_index]
+                    saveUc = saveUc[start_index:end_index]
+                saveArr = np.array((saveFhr,saveUc))
+                np.save(saveEarlyPath+preName+'_'+str(earlyCnt)+'.npy',saveArr)
+                earlyCnt = earlyCnt+1
+                saveFhrLen = saveFhr.shape[0]
+                saveUcLen = saveUc.shape[0]
+            elif (label[i] == 2):
+                start = i
+                while i < fhrLen and label[i] == 2:
+                    i = i + 1
+                saveFhr = fhr[start:i]
+                saveUc = uc[start:i]
+                if len(saveFhr) < resLen:
+                    # 在两侧补零
+                    padding_length = resLen - len(saveFhr)
+                    left_padding = padding_length // 2
+                    righ_padding = padding_length - left_padding
+                    saveUc_start_index = max(0, start - left_padding)
+                    saveUc_end_index = min(fhrLen, i + righ_padding)
+                    saveUc = uc[saveUc_start_index:saveUc_end_index]
+                    if (start - left_padding < 0):
+                        saveUc = np.pad(saveUc, (left_padding - start, 0), 'constant')
+                    if (i + righ_padding > fhrLen):
+                        saveUc = np.pad(saveUc, (0, (i + righ_padding) - fhrLen), 'constant')
+                    saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+
+                    # saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+                else:
+                    # 计算需要截取的长度
+                    trim_length = len(saveFhr) - resLen
+                    # 计算起始索引和结束索引
+                    start_index = trim_length // 2
+                    end_index = start_index + resLen
+                    saveFhr = saveFhr[start_index:end_index]
+                    saveUc = saveUc[start_index:end_index]
+                saveArr = np.array((saveFhr, saveUc))
+                np.save(saveLatePath +preName+'_'+str(lateCnt) + '.npy', saveArr)
+                lateCnt = lateCnt + 1
+                saveFhrLen = saveFhr.shape[0]
+                saveUcLen = saveUc.shape[0]
+            elif (label[i] == 3):
+                start = i
+                while i < fhrLen and label[i] == 3:
+                    i = i + 1
+                saveFhr = fhr[start:i]
+                saveUc = uc[start:i]
+                if len(saveFhr) < resLen:
+                    # 在两侧补零
+                    padding_length = resLen - len(saveFhr)
+                    left_padding = padding_length // 2
+                    righ_padding = padding_length - left_padding
+                    saveUc_start_index = max(0, start - left_padding)
+                    saveUc_end_index = min(fhrLen, i + righ_padding)
+                    saveUc = uc[saveUc_start_index:saveUc_end_index]
+                    if (start - left_padding < 0):
+                        saveUc = np.pad(saveUc, (left_padding - start, 0), 'constant')
+                    if (i + righ_padding > fhrLen):
+                        saveUc = np.pad(saveUc, (0,  (i + righ_padding)-fhrLen), 'constant')
+                    saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+
+                    # saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+                else:
+                    # 计算需要截取的长度
+                    trim_length = len(saveFhr) - resLen
+                    # 计算起始索引和结束索引
+                    start_index = trim_length // 2
+                    end_index = start_index + resLen
+                    saveFhr = saveFhr[start_index:end_index]
+                    saveUc = saveUc[start_index:end_index]
+                saveArr = np.array((saveFhr, saveUc))
+                np.save(saveVarietyyPath +preName+'_'+ str(varietyCnt) + '.npy', saveArr)
+                varietyCnt = varietyCnt + 1
+                saveFhrLen = saveFhr.shape[0]
+                saveUcLen = saveUc.shape[0]
+            elif (label[i] == 4):
+                start = i
+                while i < fhrLen and label[i] == 4:
+                    i = i + 1
+                saveFhr = fhr[start:i]
+                saveUc = uc[start:i]
+                if len(saveFhr) < resLen:
+                    # 在两侧补零
+                    padding_length = resLen - len(saveFhr)
+                    left_padding = padding_length // 2
+                    righ_padding = padding_length - left_padding
+                    saveUc_start_index = max(0, start - left_padding)
+                    saveUc_end_index = min(fhrLen, i + righ_padding)
+                    saveUc = uc[saveUc_start_index:saveUc_end_index]
+                    if (start - left_padding < 0):
+                        saveUc = np.pad(saveUc, (left_padding - start, 0), 'constant')
+                    if (i + righ_padding > fhrLen):
+                        saveUc = np.pad(saveUc, (0, (i + righ_padding) - fhrLen), 'constant')
+                    saveFhr = np.pad(saveFhr, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+
+                    # saveUc = np.pad(saveUc, (padding_length // 2, padding_length - padding_length // 2), 'constant')
+                else:
+                    # 计算需要截取的长度
+                    trim_length = len(saveFhr) - resLen
+                    # 计算起始索引和结束索引
+                    start_index = trim_length // 2
+                    end_index = start_index + resLen
+                    saveFhr = saveFhr[start_index:end_index]
+                    saveUc = saveUc[start_index:end_index]
+                saveArr = np.array((saveFhr, saveUc))
+                np.save(saveProlongPath +preName+'_'+ str(prolongCnt) + '.npy', saveArr)
+                prolongCnt = prolongCnt + 1
+                saveFhrLen = saveFhr.shape[0]
+                saveUcLen = saveUc.shape[0]
+            elif (label[i] == 0):
+                start = i
+                while i < fhrLen and label[i] == 0:
+                    i = i + 1
+                if (i - start) > resLen:
+                    saveFhr = fhr[start:start + resLen]
+                    saveUc = uc[start:start + resLen]
+                    saveArr = np.array((saveFhr, saveUc))
+                    np.save(saveNormalPath + preName + '_' + str(prolongCnt) + '.npy', saveArr)
+                    prolongCnt = prolongCnt + 1
+                    saveFhrLen = saveFhr.shape[0]
+                    saveUcLen = saveUc.shape[0]
+                    print('save: ' + filename + ' saveFhrLen: ' + str(saveFhrLen) + ' saveUcLen:' + str(saveUcLen))
+                else:
+                    continue
     # flag = 1
     #         i = i + 1
     # if flag == 0:
